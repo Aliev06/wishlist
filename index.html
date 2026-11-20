@@ -1,0 +1,355 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Wishlist · Muro & Zeyno</title>
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Wishlist">
+<meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="theme-color" content="#f5f5f7">
+<link rel="apple-touch-icon" href="icon.png"><link rel="icon" href="icon.png">
+<meta name="robots" content="noindex">
+<style>
+/* Layout: Apple Store — two people — big product tiles on a soft grey ground, one blue accent, lots of air */
+:root{
+  --bg:#f5f5f7; --card:#ffffff; --tile:#f0f0f2; --fg:#1d1d1f; --mute:#6e6e73; --line:#d2d2d7;
+  --accent:#0071e3; --accent-fg:#fff; --ok:#1f9d55; --warn:#d1393a; --glass:rgba(255,255,255,.72);
+  --shadow:0 2px 6px rgba(0,0,0,.04),0 12px 32px rgba(0,0,0,.06);
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#000; --card:#1c1c1e; --tile:#2c2c2e; --fg:#f5f5f7; --mute:#98989d; --line:#3a3a3c;
+  --accent:#2997ff; --accent-fg:#fff; --ok:#30d158; --warn:#ff453a; --glass:rgba(28,28,30,.72);
+  --shadow:0 2px 6px rgba(0,0,0,.3),0 12px 32px rgba(0,0,0,.4); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#000; --card:#1c1c1e; --tile:#2c2c2e; --fg:#f5f5f7; --mute:#98989d; --line:#3a3a3c;
+  --accent:#2997ff; --accent-fg:#fff; --ok:#30d158; --warn:#ff453a; --glass:rgba(28,28,30,.72);
+  --shadow:0 2px 6px rgba(0,0,0,.3),0 12px 32px rgba(0,0,0,.4); color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-smoothing:antialiased;font-size:16px;line-height:1.45}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));padding-block:40px 120px}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* header */
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap}
+.eyebrow{font-size:14px;font-weight:600;color:var(--mute);letter-spacing:.02em}
+h1{font-size:clamp(44px,7vw,72px);line-height:1;font-weight:700;letter-spacing:-.035em;margin:6px 0 0;text-wrap:balance}
+.add{background:var(--accent);color:var(--accent-fg);border-radius:980px;padding:12px 22px;font-weight:600;font-size:16px;display:inline-flex;align-items:center;gap:8px}
+.add:hover{filter:brightness(1.08)}
+
+.stats{margin-top:32px;background:var(--card);border-radius:24px;padding:24px 28px;box-shadow:var(--shadow);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;align-items:end}
+.stat .k{font-size:13px;color:var(--mute);font-weight:500}
+.stat .v{font-size:clamp(22px,3.4vw,32px);font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:2px}
+.stat .v small{font-size:.55em;font-weight:600;color:var(--mute);margin-left:4px}
+.bar{grid-column:1/-1;height:8px;background:var(--tile);border-radius:8px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok);border-radius:8px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.rate{grid-column:1/-1;font-size:12px;color:var(--mute);margin-top:-8px}
+
+/* controls */
+.ctl{display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin:40px 0 22px}
+.seg{display:inline-flex;background:var(--tile);border-radius:12px;padding:3px}
+.seg button{padding:7px 16px;border-radius:9px;font-size:14px;font-weight:600;color:var(--mute)}
+.seg button[aria-pressed="true"]{background:var(--card);color:var(--fg);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;max-width:100%;padding-bottom:2px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:8px 16px;border-radius:980px;background:var(--card);font-size:14px;font-weight:500;color:var(--fg);box-shadow:inset 0 0 0 1px var(--line)}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);box-shadow:none}
+
+/* grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px}
+.card{padding:0;width:100%;background:var(--card);border-radius:24px;overflow:hidden;text-align:left;display:flex;flex-direction:column;box-shadow:var(--shadow);transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
+.card:hover{transform:translateY(-4px) scale(1.01)}
+.ph{aspect-ratio:1/1;max-width:100%;background:var(--tile);position:relative;overflow:hidden}
+.ph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.card:hover .ph img{transform:scale(1.04)}
+.ph .none{position:absolute;inset:0;display:grid;place-items:center;font-size:56px;font-weight:700;color:var(--line);letter-spacing:-.04em}
+.badge{position:absolute;top:14px;left:14px;padding:5px 11px;border-radius:980px;background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font-size:12px;font-weight:600;color:var(--fg)}
+.badge.now{color:var(--warn)}
+.badge.done{color:var(--ok)}
+.meta{padding:18px 20px 22px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.cat{font-size:12px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
+.nm{font-size:19px;font-weight:600;letter-spacing:-.01em;line-height:1.25;overflow-wrap:anywhere}
+.pr{font-size:17px;font-weight:500;color:var(--fg);font-variant-numeric:tabular-nums;margin-top:6px}
+.pr span{color:var(--mute);font-size:14px;margin-left:6px}
+@media (max-width:720px){.pr span{display:block;margin-left:0}}
+.card.isdone .ph img{filter:grayscale(.5) brightness(.95)}
+
+.empty{background:var(--card);border-radius:28px;padding:64px 28px;text-align:center;box-shadow:var(--shadow)}
+.empty h2{font-size:32px;letter-spacing:-.03em;margin:0 0 8px;font-weight:700}
+.empty p{color:var(--mute);margin:0 auto 24px;max-width:420px}
+.note{font-size:14px;color:var(--mute);text-align:center;margin-top:16px}
+
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.42);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:40;display:flex;align-items:center;justify-content:center;padding:20px max(16px,env(safe-area-inset-right,0px)) 20px max(16px,env(safe-area-inset-left,0px));animation:fd .25s}
+.sheet{background:var(--card);border-radius:28px;width:100%;max-width:880px;max-height:calc(100dvh - 40px);overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.35);animation:up .4s cubic-bezier(.2,.8,.2,1)}
+@keyframes fd{from{opacity:0}} @keyframes up{from{transform:translateY(30px);opacity:0}}
+.det{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}
+.det .ph{aspect-ratio:auto;min-height:420px;border-radius:0}
+.det .body{padding:36px 34px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.det .nm{font-size:32px;font-weight:700;letter-spacing:-.025em}
+.det .pr{font-size:24px;font-weight:600}
+.det .txt{color:var(--mute);white-space:pre-wrap;overflow-wrap:anywhere}
+.det a.lnk{color:var(--accent);font-weight:500;text-decoration:none;overflow-wrap:anywhere}
+.det a.lnk:hover{text-decoration:underline}
+.acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:auto;padding-top:20px}
+.btn{padding:11px 20px;border-radius:980px;font-weight:600;font-size:15px;background:var(--tile)}
+.btn.pri{background:var(--accent);color:var(--accent-fg)}
+.btn.ok{background:var(--ok);color:#fff}
+.btn.del{color:var(--warn)}
+.btn.del.sure{background:var(--warn);color:#fff}
+.x{position:sticky;top:14px;float:right;margin:14px 14px 0 0;width:34px;height:34px;border-radius:50%;background:var(--glass);backdrop-filter:blur(14px);font-size:18px;display:grid;place-items:center;z-index:2}
+
+form{padding:34px;display:grid;gap:18px}
+form h2{margin:0;font-size:28px;letter-spacing:-.025em}
+.drop{border:2px dashed var(--line);border-radius:20px;aspect-ratio:16/9;max-width:100%;display:grid;place-items:center;text-align:center;color:var(--mute);cursor:pointer;overflow:hidden;position:relative;background:var(--tile)}
+.drop.over{border-color:var(--accent)}
+.drop img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.drop b{color:var(--accent)}
+.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+label{display:grid;gap:6px;font-size:13px;font-weight:600;color:var(--mute)}
+input,select,textarea{font:inherit;font-size:16px;color:var(--fg);background:var(--tile);border:1px solid transparent;border-radius:12px;padding:12px 14px;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);outline:none}
+textarea{min-height:84px;resize:vertical}
+.pair{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:8px}
+.err{color:var(--warn);font-size:14px;min-height:1em}
+.toast{position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:12px 20px;border-radius:980px;font-weight:600;font-size:14px;z-index:60;animation:up .3s}
+
+@media (max-width:720px){
+  .det{grid-template-columns:1fr}.det .ph{min-height:0;aspect-ratio:1/1}
+  .det .body{padding:26px 22px}
+  form{padding:26px 22px}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr));padding:20px}
+  .stats .stat:first-child{grid-column:1/-1}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .card{border-radius:18px}.meta{padding:12px 14px 16px}.nm{font-size:15px}.pr{font-size:14px}
+  .row{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.who{display:inline-flex;background:var(--tile);border-radius:16px;padding:4px;margin-top:22px}
+.who button{padding:10px 28px;border-radius:12px;font-size:17px;font-weight:700;color:var(--mute);letter-spacing:-.01em}
+.who button[aria-pressed="true"]{background:var(--card);color:var(--fg);box-shadow:0 1px 6px rgba(0,0,0,.12)}
+.login{max-width:440px;margin:12vh auto 0;background:var(--card);border-radius:28px;padding:36px 30px;box-shadow:var(--shadow);display:grid;gap:14px}
+.login h2{margin:0;font-size:30px;letter-spacing:-.03em}.login p{margin:0;color:var(--mute)}
+.foot{margin-top:48px;text-align:center;font-size:13px;color:var(--mute)}.foot button{color:var(--accent);font-weight:500}
+.sync{font-size:13px;color:var(--mute);min-height:1.2em}
+</style>
+</head><body>
+<div class="wrap" id="app" hidden>
+  <header class="top">
+    <div><div class="eyebrow">Muro &amp; Zeyno</div><h1>Wishlist</h1>
+      <div class="who" role="group" aria-label="Чей список"><button data-who="muro" aria-pressed="true">Muro</button><button data-who="zeyno" aria-pressed="false">Zeyno</button></div></div>
+    <button class="add" id="addBtn"><span aria-hidden="true" style="font-size:20px;line-height:0">+</span> Добавить</button>
+  </header>
+
+  <section class="stats" aria-label="Итоги">
+    <div class="stat"><div class="k" id="kAll">Весь вишлист</div><div class="v" id="sAll">—</div></div>
+    <div class="stat"><div class="k">Осталось</div><div class="v" id="sLeft">—</div></div>
+    <div class="stat"><div class="k">Сбылось</div><div class="v" id="sDone">—</div></div>
+    <div class="bar"><i id="sBar" style="width:0"></i></div>
+    <div class="rate">Всё считается в манатах · 1 $ = 1,70 ₼ · 1 AED = 0,46 ₼</div>
+  </section>
+
+  <div class="ctl">
+    <div class="seg" role="group" aria-label="Статус">
+      <button id="tWant" aria-pressed="true">Хочу</button>
+      <button id="tDone" aria-pressed="false">Сбылось</button>
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="Категории"></div>
+  </div>
+  <div class="sync" id="sync"></div>
+  <main id="list"><div class="empty"><h2>Загружаю…</h2><p>Секунду, достаю желания.</p></div></main>
+  <div class="foot"><button id="logout">Выйти на этом устройстве</button></div>
+</div>
+
+<div class="wrap" id="gate" hidden>
+  <form class="login" id="lf" novalidate>
+    <h2>Wishlist</h2>
+    <p>Muro &amp; Zeyno. Введи ключ доступа один раз — телефон его запомнит.</p>
+    <label>Ключ доступа<input id="tok" type="password" autocomplete="off" placeholder="github_pat_…"></label>
+    <div class="err" id="lerr"></div>
+    <button class="btn pri" type="submit" id="lbtn">Войти</button>
+  </form>
+</div>
+
+<script>
+const REPO='Aliev06/wishlist-data', FILE='wishes.json';
+const RATE={AZN:1,USD:1.7,AED:0.463}, SYM={AZN:'₼',USD:'$',AED:'AED'};
+const CATS=['Техника','Одежда','Часы и аксессуары','Красота','Авто','Путешествия','Дом','Спорт','Другое'];
+const NAMES={muro:'Muro',zeyno:'Zeyno'};
+const $=s=>document.querySelector(s);
+let TOKEN='', items=[], who='muro', tab='want', cat='Все', loaded=false, busy=0;
+try{TOKEN=localStorage.getItem('wl_token')||'';who=localStorage.getItem('wl_who')||'muro'}catch(e){}
+
+/* ---------- GitHub storage ---------- */
+async function gh(path,opt={},raw=false){
+  const r=await fetch(`https://api.github.com/repos/${REPO}/${path}`,{...opt,cache:'no-store',headers:{Authorization:'Bearer '+TOKEN,Accept:raw?'application/vnd.github.raw':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',...(opt.body?{'Content-Type':'application/json'}:{})}});
+  if(!r.ok){const e=new Error('gh '+r.status);e.status=r.status;throw e}
+  return raw?r.blob():r.status===204?null:r.json();
+}
+const b64=s=>{const b=new TextEncoder().encode(s);let x='';for(let i=0;i<b.length;i+=0x8000)x+=String.fromCharCode(...b.subarray(i,i+0x8000));return btoa(x)};
+const unb64=s=>new TextDecoder().decode(Uint8Array.from(atob(s.replace(/\n/g,'')),c=>c.charCodeAt(0)));
+async function readAll(){
+  try{const f=await gh('contents/'+FILE);return{list:JSON.parse(unb64(f.content)||'[]'),sha:f.sha}}
+  catch(e){if(e.status===404)return{list:[],sha:null};throw e}
+}
+async function mutate(fn,msg){
+  for(let i=0;i<4;i++){
+    const {list,sha}=await readAll();const next=fn(list);
+    try{await gh('contents/'+FILE,{method:'PUT',body:JSON.stringify({message:msg,content:b64(JSON.stringify(next,null,1)),...(sha?{sha}:{})})});items=next;render();return}
+    catch(e){if(e.status!==409&&e.status!==422)throw e}
+  }
+  throw new Error('conflict');
+}
+const blobB64=b=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(',')[1]);r.onerror=rej;r.readAsDataURL(b)});
+async function uploadPhoto(blob){
+  const path='photos/'+Date.now().toString(36)+Math.random().toString(36).slice(2,7)+'.jpg';
+  const r=await gh('contents/'+path,{method:'PUT',body:JSON.stringify({message:'photo',content:await blobB64(blob)})});
+  return{photo:path,photoSha:r.content.sha};
+}
+async function deletePhoto(w){if(!w.photo)return;try{await gh('contents/'+w.photo,{method:'DELETE',body:JSON.stringify({message:'remove photo',sha:w.photoSha})})}catch(e){}}
+const urls=new Map();
+function photoURL(path){
+  if(!path)return null;if(urls.has(path))return urls.get(path);
+  const p=gh('contents/'+path,{},true).then(b=>URL.createObjectURL(b)).catch(()=>{urls.delete(path);return null});
+  urls.set(path,p);return p;
+}
+function fillPhotos(root){root.querySelectorAll('img[data-p]').forEach(async im=>{const u=await photoURL(im.dataset.p);if(u){im.src=u;im.onload=()=>im.style.opacity=1}})}
+
+/* ---------- UI ---------- */
+const fmt=(n,c='AZN')=>{const v=Math.round(n).toLocaleString('ru-RU');return c==='AZN'?`${v} ₼`:c==='USD'?`$${v}`:`${v} AED`};
+const azn=w=>(+w.price||0)*(RATE[w.currency]||1);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const img=(w,lazy)=>w.photo?`<img data-p="${esc(w.photo)}" alt="" style="opacity:0;transition:opacity .4s" ${lazy?'loading="lazy"':''}>`:`<div class="none">${esc((w.name||'?').slice(0,1).toUpperCase())}</div>`;
+function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.append(d);setTimeout(()=>d.remove(),2200)}
+function setWho(v){who=v;try{localStorage.setItem('wl_who',v)}catch(e){}document.querySelectorAll('[data-who]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.who===v));cat='Все';render()}
+
+function render(){
+  const mine=items.filter(w=>(w.owner||'muro')===who);
+  const all=mine.reduce((s,w)=>s+azn(w),0), done=mine.filter(w=>w.done).reduce((s,w)=>s+azn(w),0);
+  $('#kAll').textContent='Вишлист '+NAMES[who];
+  $('#sAll').innerHTML=`${fmt(all)}<small>${mine.length} шт.</small>`;
+  $('#sLeft').textContent=fmt(all-done);$('#sDone').textContent=fmt(done);
+  $('#sBar').style.width=(all?done/all*100:0)+'%';
+  const pool=mine.filter(w=>tab==='done'?w.done:!w.done);
+  const cats=['Все',...CATS.filter(c=>pool.some(w=>w.category===c))];if(!cats.includes(cat))cat='Все';
+  $('#chips').innerHTML=cats.map(c=>`<button class="chip" aria-pressed="${c===cat}" data-c="${esc(c)}">${esc(c)}</button>`).join('');
+  if(!loaded)return;
+  const list=pool.filter(w=>cat==='Все'||w.category===cat).sort((a,b)=>(b.priority==='now')-(a.priority==='now')||(b.createdAt||0)-(a.createdAt||0));
+  if(!list.length){$('#list').innerHTML=tab==='done'
+    ?`<div class="empty"><h2>Пока ничего не сбылось</h2><p>Когда желание исполнится, открой карточку и нажми «Куплено».</p></div>`
+    :`<div class="empty"><h2>Чего хочет ${NAMES[who]}?</h2><p>Добавь первое желание: фото, название и цена.</p><button class="add" data-add>+ Добавить желание</button></div>`;return}
+  $('#list').innerHTML='<div class="grid">'+list.map(w=>`
+   <button class="card ${w.done?'isdone':''}" data-id="${esc(w.id)}">
+     <div class="ph">${img(w,true)}${w.done?'<span class="badge done">✓ Сбылось</span>':w.priority==='now'?'<span class="badge now">● Хочу сейчас</span>':''}</div>
+     <div class="meta"><div class="cat">${esc(w.category||'Другое')}</div><div class="nm">${esc(w.name)}</div>
+       <div class="pr">${fmt(+w.price||0,w.currency)}${w.currency!=='AZN'?`<span>≈ ${fmt(azn(w))}</span>`:''}</div></div>
+   </button>`).join('')+'</div>';
+  fillPhotos($('#list'));
+}
+
+function close(){document.querySelector('.scrim')?.remove()}
+function sheet(html){close();const s=document.createElement('div');s.className='scrim';s.innerHTML=`<div class="sheet" role="dialog" aria-modal="true"><button class="x" aria-label="Закрыть">✕</button>${html}</div>`;
+  s.addEventListener('click',e=>{if(e.target===s||e.target.closest('.x'))close()});document.body.append(s);fillPhotos(s);return s}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+async function run(btn,label,fn){btn.disabled=true;const t=btn.textContent;btn.textContent=label;busy++;try{await fn()}catch(e){btn.disabled=false;btn.textContent=t;toast(e.status===401?'Ключ не подходит — войди заново':'Не сохранилось. Проверь интернет')}finally{busy--}}
+
+function openDetail(id){
+  const w=items.find(x=>x.id===id);if(!w)return;
+  const s=sheet(`<div class="det"><div class="ph">${img(w)}</div>
+   <div class="body"><div class="cat">${NAMES[w.owner||'muro']} · ${esc(w.category||'Другое')}${w.priority==='now'&&!w.done?' · Хочу сейчас':''}</div>
+   <div class="nm">${esc(w.name)}</div>
+   <div class="pr">${fmt(+w.price||0,w.currency)}${w.currency!=='AZN'?` <span style="color:var(--mute);font-size:16px;font-weight:500">≈ ${fmt(azn(w))}</span>`:''}</div>
+   ${w.link?`<a class="lnk" href="${esc(w.link)}" target="_blank" rel="noopener">Открыть в магазине ↗</a>`:''}
+   ${w.note?`<div class="txt">${esc(w.note)}</div>`:''}
+   ${w.done&&w.doneAt?`<div class="txt">Сбылось ${new Date(w.doneAt).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'})} 🎉</div>`:''}
+   <div class="acts"><button class="btn ${w.done?'':'ok'}" id="dDone">${w.done?'Вернуть в «Хочу»':'✓ Куплено'}</button><button class="btn" id="dEdit">Изменить</button><button class="btn del" id="dDel">Удалить</button></div></div></div>`);
+  const bd=s.querySelector('#dDone');bd.onclick=()=>run(bd,'Сохраняю…',async()=>{const nd=!w.done;await mutate(l=>l.map(x=>x.id===id?{...x,done:nd,doneAt:nd?Date.now():null}:x),nd?'done: '+w.name:'undo: '+w.name);close();toast(nd?'Сбылось! 🎉':'Вернул в «Хочу»')});
+  s.querySelector('#dEdit').onclick=()=>openForm(w);
+  const del=s.querySelector('#dDel');del.onclick=()=>{
+    if(!del.classList.contains('sure')){del.classList.add('sure');del.textContent='Точно удалить?';return}
+    run(del,'Удаляю…',async()=>{await mutate(l=>l.filter(x=>x.id!==id),'delete: '+w.name);deletePhoto(w);close();toast('Удалено')})};
+}
+
+async function shrink(file){
+  try{const bmp=await createImageBitmap(file);const k=Math.min(1,1400/Math.max(bmp.width,bmp.height));
+    const c=document.createElement('canvas');c.width=Math.round(bmp.width*k);c.height=Math.round(bmp.height*k);
+    c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);return await new Promise(r=>c.toBlob(b=>r(b||file),'image/jpeg',.85))}catch(e){return file}
+}
+
+function openForm(w){
+  const ed=!!w;w=w||{currency:'AZN',category:who==='zeyno'?'Красота':'Техника',priority:'later',owner:who};
+  let file=null;
+  const s=sheet(`<form id="f" novalidate><h2>${ed?'Изменить желание':'Новое желание · '+NAMES[who]}</h2>
+   <div class="drop" id="drop" tabindex="0" role="button" aria-label="Выбрать фото">${w.photo?img(w):''}<div><b>Выбери фото</b><br>или перетащи сюда</div></div>
+   <input type="file" id="fFile" accept="image/*" hidden>
+   <label>Название<input id="fName" maxlength="80" placeholder="Например, AirPods Max" value="${esc(w.name||'')}"></label>
+   <div class="row">
+     <label>Цена<div class="pair"><input id="fPrice" inputmode="decimal" placeholder="0" value="${esc(w.price??'')}">
+       <select id="fCur">${Object.keys(RATE).map(c=>`<option value="${c}" ${w.currency===c?'selected':''}>${SYM[c]} ${c}</option>`).join('')}</select></div></label>
+     <label>Категория<select id="fCat">${CATS.map(c=>`<option ${w.category===c?'selected':''}>${c}</option>`).join('')}</select></label>
+   </div>
+   <div class="row">
+     <label>Чьё желание<select id="fOwn"><option value="muro" ${w.owner==='muro'?'selected':''}>Muro</option><option value="zeyno" ${w.owner==='zeyno'?'selected':''}>Zeyno</option></select></label>
+     <label>Когда<select id="fPri"><option value="now" ${w.priority==='now'?'selected':''}>Хочу сейчас</option><option value="later" ${w.priority!=='now'?'selected':''}>Когда-нибудь</option></select></label>
+   </div>
+   <label>Ссылка на магазин<input id="fLink" type="url" placeholder="https://" value="${esc(w.link||'')}"></label>
+   <label>Заметка<textarea id="fNote" maxlength="500" placeholder="Цвет, размер, где смотрел…">${esc(w.note||'')}</textarea></label>
+   <div class="err" id="fErr"></div>
+   <div class="acts" style="padding-top:0"><button class="btn pri" id="fSave" type="submit">${ed?'Сохранить':'Добавить'}</button><button class="btn" type="button" id="fCancel">Отмена</button></div></form>`);
+  const drop=s.querySelector('#drop'),inp=s.querySelector('#fFile');
+  const pick=f=>{if(!f||!/^image\//.test(f.type))return;file=f;drop.innerHTML=`<img src="${URL.createObjectURL(f)}" alt="">`};
+  drop.onclick=()=>inp.click();drop.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();inp.click()}};
+  inp.onchange=()=>pick(inp.files[0]);
+  drop.ondragover=e=>{e.preventDefault();drop.classList.add('over')};drop.ondragleave=()=>drop.classList.remove('over');
+  drop.ondrop=e=>{e.preventDefault();drop.classList.remove('over');pick(e.dataTransfer.files[0])};
+  s.addEventListener('paste',e=>{const f=[...(e.clipboardData?.files||[])][0];if(f)pick(f)});
+  s.querySelector('#fCancel').onclick=close;
+  s.querySelector('#f').onsubmit=e=>{
+    e.preventDefault();const err=s.querySelector('#fErr'),btn=s.querySelector('#fSave');
+    const name=s.querySelector('#fName').value.trim();const price=parseFloat(s.querySelector('#fPrice').value.replace(/\s/g,'').replace(',','.'));
+    if(!name){err.textContent='Напиши, что хочешь';return}
+    if(!(price>=0)){err.textContent='Укажи цену цифрами';return}
+    let link=s.querySelector('#fLink').value.trim();if(link&&!/^https?:\/\//i.test(link))link='https://'+link;
+    err.textContent='';
+    const data={name,price,currency:s.querySelector('#fCur').value,category:s.querySelector('#fCat').value,owner:s.querySelector('#fOwn').value,
+      priority:s.querySelector('#fPri').value,link,note:s.querySelector('#fNote').value.trim()};
+    run(btn,file?'Загружаю фото…':'Сохраняю…',async()=>{
+      if(file){Object.assign(data,await uploadPhoto(await shrink(file)));if(ed)deletePhoto(w);btn.textContent='Сохраняю…'}
+      if(ed)await mutate(l=>l.map(x=>x.id===w.id?{...x,...data}:x),'edit: '+name);
+      else await mutate(l=>[...l,{id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),photo:'',photoSha:'',...data,done:false,doneAt:null,createdAt:Date.now()}],'add: '+name);
+      if(data.owner!==who)setWho(data.owner);
+      close();toast(ed?'Сохранено':'Добавлено');
+    });
+  };
+  setTimeout(()=>s.querySelector('#fName').focus(),50);
+}
+
+document.addEventListener('click',e=>{
+  const c=e.target.closest('.card');if(c)return openDetail(c.dataset.id);
+  const ch=e.target.closest('.chip');if(ch){cat=ch.dataset.c;render();return}
+  const wb=e.target.closest('[data-who]');if(wb)return setWho(wb.dataset.who);
+  if(e.target.closest('[data-add]'))openForm();
+});
+$('#addBtn').onclick=()=>openForm();
+$('#tWant').onclick=()=>{tab='want';$('#tWant').setAttribute('aria-pressed',true);$('#tDone').setAttribute('aria-pressed',false);cat='Все';render()};
+$('#tDone').onclick=()=>{tab='done';$('#tDone').setAttribute('aria-pressed',true);$('#tWant').setAttribute('aria-pressed',false);cat='Все';render()};
+$('#logout').onclick=()=>{try{localStorage.removeItem('wl_token')}catch(e){}TOKEN='';showGate()};
+
+async function refresh(){
+  if(busy||document.querySelector('.scrim'))return;
+  try{const {list}=await readAll();const changed=JSON.stringify(list)!==JSON.stringify(items);items=list;loaded=true;$('#sync').textContent='';if(changed)render()}
+  catch(e){if(e.status===401||e.status===403||e.status===404&&!loaded){showGate('Ключ не подходит или устарел');return}
+    $('#sync').textContent='Нет связи — показываю последнее, что загрузилось';}
+}
+function showGate(msg){$('#app').hidden=true;$('#gate').hidden=false;$('#lerr').textContent=msg||''}
+function showApp(){$('#gate').hidden=true;$('#app').hidden=false;setWho(who);refresh()}
+$('#lf').onsubmit=async e=>{e.preventDefault();const v=$('#tok').value.trim();if(!v){$('#lerr').textContent='Вставь ключ';return}
+  $('#lbtn').disabled=true;$('#lbtn').textContent='Проверяю…';TOKEN=v;
+  try{await gh('');try{localStorage.setItem('wl_token',v)}catch(x){}$('#tok').value='';showApp()}
+  catch(x){$('#lerr').textContent=x.status===401?'Ключ неверный':x.status===404?'У ключа нет доступа к wishlist-data':'Нет связи, попробуй ещё раз';TOKEN=''}
+  finally{$('#lbtn').disabled=false;$('#lbtn').textContent='Войти'}};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&TOKEN)refresh()});
+setInterval(()=>{if(!document.hidden&&TOKEN)refresh()},45000);
+TOKEN?showApp():showGate();
+</script>
+
+</body></html>
