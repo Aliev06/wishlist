@@ -181,7 +181,7 @@ try{TOKEN=localStorage.getItem('wl_token')||'';who=localStorage.getItem('wl_who'
 
 /* ---------- GitHub storage ---------- */
 async function gh(path,opt={},raw=false){
-  const r=await fetch(`https://api.github.com/repos/${REPO}/${path}`,{...opt,cache:'no-store',headers:{Authorization:'Bearer '+TOKEN,Accept:raw?'application/vnd.github.raw':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',...(opt.body?{'Content-Type':'application/json'}:{})}});
+  const r=await fetch(`https://api.github.com/repos/${REPO}${path?'/'+path:''}`,{...opt,cache:'no-store',headers:{Authorization:'Bearer '+TOKEN,Accept:raw?'application/vnd.github.raw':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',...(opt.body?{'Content-Type':'application/json'}:{})}});
   if(!r.ok){const e=new Error('gh '+r.status);e.status=r.status;throw e}
   return raw?r.blob():r.status===204?null:r.json();
 }
